@@ -1,2 +1,2 @@
 # Mirror
-Using a mirror for stuff
+A mirror that detects gestures and speech to function
