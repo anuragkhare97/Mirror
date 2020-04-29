@@ -3,66 +3,137 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Hello Bulma!</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css">
-    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <title>Magic Mirror</title>
 
     <style>
-    	.hero-body{
-    		height:100%;
+    	body{
+    		background-color: black;
+    		font-family: "Courier New", Courier, monospace;
     	}
-    	body{	background-color: black;
-    		}
-    	.box{	background-color: black;
-    		}
-    	h1{color: white;}
-    	p{color: white;}
+    	#mainScreen{
+    		width: 50%;
+			height: 50%;
+
+			position:fixed;
+
+			left: 0%;
+			margin-left: 0%;
+
+			top: 5%;
+			bottom: 0%;
+
+			background-color: black;
+			border-radius: 20px;
+			color: white;
+
+			text-align: center;
+    	}
+
+    	#mainScreen h2{
+    		position:relative;
+    		top:25%;
+    	}
+
+    	h1{
+    		font-size: 200%;
+    	}
+
+    	@-webkit-keyframes fadeInDownBig {
+  		from {
+    		opacity: 0;
+    		-webkit-transform: translate3d(0, -2000px, 0);
+    		transform: translate3d(0, -2000px, 0);
+  		}
+
+  		to {
+   		 opacity: 1;
+    	 -webkit-transform: translate3d(0, 0, 0);
+   		 transform: translate3d(0, 0, 0);
+  		}
+		}
+
+		@keyframes fadeInDownBig {
+  		from {
+    	opacity: 0;
+    	-webkit-transform: translate3d(0, -2000px, 0);
+    	transform: translate3d(0, -2000px, 0);
+  		}
+
+  		to {
+    	opacity: 1;
+    	-webkit-transform: translate3d(0, 0, 0);
+    	transform: translate3d(0, 0, 0);
+  		}
+		}
+
+		.fadeInDownBig {
+  		-webkit-animation-name: fadeInDownBig;
+  		animation-name: fadeInDownBig;
+		}
+
+		.animated {
+	  	-webkit-animation-duration: 1s;
+  		animation-duration: 1s;
+  		-webkit-animation-fill-mode: both;
+  		animation-fill-mode: both;
+		}
+
+
     </style>
 
   </head>
-  <body>
+  <body onload="startApp()">
+  	<div id="mainScreen" class="animated fadeInDownBig">
+  		<h1>Hi Annoor!</h1>
+  		<h2 id="date"></h2>
+  		</br>
+  		<h2 id="weather"></h2>
+  		<h2 id=weatherFeels></h2>
+  		<h2 id=weatherDescription></h2>
+  	</div>
+  
 
-  <section class="hero is-fullheight">
-  <div class="hero-body">
-  <div class="container is-fluid">
-    <div class="tile">
-    	<div class="tile is-ancestor">
-    		<div class="tile is-4 is-vertical is-parent">
-    			<div class="tile is-child box">
-    				<h1 class="title has-text-white">
-        				Hi Annoor!
-      				</h1>
-      				<p class="subtitle has-text-white">
-        				It's finally Summer!
-      				</p>
-    			</div>
-    			<div class="tile is-child box">
-    				<p class="subtitle has-text-white">
-    					The Weather Today Is Nice.
-    				</p>
-    			</div>
-    			<div class="tile is-child box">
-    				<p class="subtitle has-text-white">
-    					Traffic is Light Today.
-    				</p>
-    			</div>
-    		</div>
-    		<div class="tile is-parent">
-    			<div class="tile is-child box">
-    				<h1 class="title has-text-white">
-    					Here's a Summary Of Your Day
-    				</h1>
-    				<ul class="has-text-white">
-    					<li>Program</li>
-    					<li>Eat</li>
-    					<li>Play Video Games</li>
-    				</ul>
-    			</div>
-    		</div>
-    	</div>
-    </div>
-  </div>
-  </div>
-  </section>
+  	<script type="text/javascript">
+
+  		function startTime(){
+			var date = new Date();
+  			var minutes = date.getMinutes();
+
+  			if(minutes < 10){
+  				minutes = "0" + minutes;
+  			}
+
+  			document.getElementById("date").innerHTML = "Today is " + date.toDateString() + "</br> It is " + date.getHours() + ": " + minutes;
+  			var timerRepeat = setTimeout(startTime, 6000);
+  		}
+
+  		function weatherCheck(){
+			var key = "7eb27b515fa6a63459e65c0bcc276a25";
+  			var cityId = "6119109";
+  			var apiCall = "http://api.openweathermap.org/data/2.5/weather?id=" + cityId + "&APPID=" + key + "&&units=metric";
+
+  			fetch(apiCall)
+  				.then(response => response.json())
+  				.then(data => {
+  					var temp = data['main']['temp'];
+  					var feels = data['main']['feels_like'];
+  					var description = data['weather'][0]['description'];
+  					
+  					document.getElementById("weather").innerHTML = "The temperature today is " + temp + "°C.";
+  					document.getElementById("weatherFeels").innerHTML = "It feels like " + feels + "°C.";
+  					document.getElementById("weatherDescription").innerHTML = "Weather type: " + description;
+  				})
+  				.catch( err => document.getElementById("weather").innerHTML = "Error Loading Weather Data.")
+		}
+
+		function startApp(){
+
+			startTime();
+			weatherCheck();
+		}  		
+  		
+
+	</script>
+
   </body>
 </html>
